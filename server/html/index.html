@@ -1,0 +1,144 @@
+<html>
+
+<head>
+    <title>
+        Chat app in jquery
+    </title>
+    <link rel="stylesheet" type="text/css" src="./main.css" />
+    <style>
+        *{
+                box-sizing: border-box;
+
+            }
+            body{
+                margin:10px;
+            }
+           
+            #container{
+                margin:0 200px 0 200px;
+              
+               height:88vh;
+              
+               display:none;
+        }
+        #flex-container{
+           
+                display:flex;
+            
+        }
+        #users{
+            flex:20%;
+        }
+        #nick-name-container{
+            margin:0 200px 0 200px;
+              background-color: wheat;
+              height:88vh;
+        }
+        #nick-name-input{
+            background-image: linear-gradient(to right,lightgreen,darkgreen)
+        }
+        #chat-flex{
+            flex:80%;
+        }
+#chat-area{
+    width:100%;
+    height:100%;
+    
+    background-image: linear-gradient(to right,lightgreen,darkgreen)
+}
+#message{
+    width:100%;
+    background-image: linear-gradient(to left,wheat,white)
+}
+#form-container{
+    display: flex;
+    height:40px;
+}
+#message{
+    flex:80%;
+   
+}
+#btn{
+    flex:20%;
+
+}
+            
+        </style>
+</head>
+
+<body>
+    <div id="nick-name-container">
+        <form id="nick-name-form">
+            <label>Enter your nickname</label><input type="Text" id="nick-name-input"/>
+        </form>
+        <div id="nick-name-error"></div>
+    </div>
+   
+   
+    <div id="container">
+       <div id="flex-container">
+            <div id="users"></div>
+            <div id="chat-flex">
+        <div id="chat-area"></div>
+        <form id="send-message">
+            <div id="form-container">
+                <input type="text" id="message" />
+                <button type="submit" id="btn">Send</button>
+            </div>
+        </form>
+    </div> 
+</div>
+    
+</div>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        jQuery(function ($) {
+            var socket = io.connect();
+            
+          
+            var $nickNameForm=$('#nick-name-form');
+            var $nickNameValue=$('#nick-name-input')
+            var $messageForm = $('#send-message');
+            var $messageBox = $('#message');
+            var $chat = $('#chat-area');
+            var $users=$("#users")
+            $nickNameForm.submit(e=>{
+                e.preventDefault();
+                socket.emit('new user',$nickNameValue.val(),data=>{
+                    if(data){
+                        
+                       $('#container').show();
+                       $('#nick-name-container').hide();
+                        $('#nick-name-error').html=""
+                    }
+                    else{
+                        $('#nick-name-error').html("user already exists")
+                    }
+                })
+                $nickNameValue.val('')
+            })
+
+            $messageForm.submit(e => {
+                e.preventDefault();
+
+                socket.emit('send message', $messageBox.val())
+                $messageBox.val('');
+            })
+            socket.on('new-message', data => {
+                console.log(data)
+                $chat.append(data.nick+":"+data.msg + "<br />")
+            })
+            socket.on("user list",data=>{
+                var html="";
+                for(i=0;i<data.length;i++){
+                    html+=data[i]+"<br />"
+                    $users.html(html)
+                }
+            })
+        })
+    </script>
+</body>
+
+</html>
