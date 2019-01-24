@@ -110,7 +110,7 @@
         crossorigin="anonymous"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        jQuery(function ($) {
+        $(document).ready(function () {
             var socket = io.connect();
             
           
@@ -148,24 +148,25 @@
             })
             socket.on("user list",data=>{
                 
-                // for(i=0;i<data.length;i++){
+                for(i=0;i<data.length;i++){
                 
-                //     $users.append("<div class='user-list-li'>"+data[i]+"</div>")
-                //     $('.user-list-li').eq([i]).click(e=>{
-                //        console.log($(this).val())
-                //     })
-                // }
-                $.each(data,(i,user)=>{
-                    $users.append("<div class='user-list-li'>"+data[i]+"</div>").click(e=>{
-                        $messageBox.val('/w '+user)
-                    document.getElementById("message").value.trim()
-                    })
-
-                })
+                    $users.append("<div class='user-list-li'>"+data[i]+"</div>")
+                    
+                }
+              
             })
             socket.on("whisper",data=>{
                 $chat.append(data.nick+":"+data.msg + "<br />")
             })
+          
+            $(document).on('click','.user-list-li',(e)=>{
+                
+                $messageBox.val("/w "+e.target.innerHTML)
+            //     var checks=document.getElementsByClassName("user-list-li")
+            //    var array=Array.from(checks)
+            //    console.log(array)
+            })
+              
            
            
         })
