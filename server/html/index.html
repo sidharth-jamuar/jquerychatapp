@@ -29,6 +29,21 @@
         #users{
             flex:20%;
         }
+        #users{
+            border:1px solid black;
+            background-color:darkolivegreen;
+        }
+
+        .user-list-li{
+            text-align: center;
+           padding:20px 10px;
+           list-style: none;
+           color: white;
+           border-bottom:1px solid black;
+        }
+        .user-list-li:hover{
+            background-color:black;
+        }
         #nick-name-container{
             margin:0 200px 0 200px;
               background-color: wheat;
@@ -67,6 +82,7 @@
 </head>
 
 <body>
+    <p>fuck</p>
     <div id="nick-name-container">
         <form id="nick-name-form">
             <label>Enter your nickname</label><input type="Text" id="nick-name-input"/>
@@ -131,12 +147,27 @@
                 $chat.append(data.nick+":"+data.msg + "<br />")
             })
             socket.on("user list",data=>{
-                var html="";
-                for(i=0;i<data.length;i++){
-                    html+=data[i]+"<br />"
-                    $users.html(html)
-                }
+                
+                // for(i=0;i<data.length;i++){
+                
+                //     $users.append("<div class='user-list-li'>"+data[i]+"</div>")
+                //     $('.user-list-li').eq([i]).click(e=>{
+                //        console.log($(this).val())
+                //     })
+                // }
+                $.each(data,(i,user)=>{
+                    $users.append("<div class='user-list-li'>"+data[i]+"</div>").click(e=>{
+                        $messageBox.val('/w '+user)
+                    document.getElementById("message").value.trim()
+                    })
+
+                })
             })
+            socket.on("whisper",data=>{
+                $chat.append(data.nick+":"+data.msg + "<br />")
+            })
+           
+           
         })
     </script>
 </body>
