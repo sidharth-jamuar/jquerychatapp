@@ -1,9 +1,26 @@
 const app=require("express")();
 const server=require("http").createServer(app)
 const io=require("socket.io").listen(server);
+const session=require("express-session");
+const bodyParser=require('body-parser')
 var users={};
-const PORT=process.env.PORT || 3004;
 
+const {NODE_ENV,SESS_ID="sid",SESS_SECRET="super secret"}=process.env;
+const PORT=process.env.PORT || 3004;
+const TWO_HOURS=1000*60*60*2;
+const IN_PROD=(NODE_ENV==="production")
+app.use(bodyParser.urlencoded({extended:true}))
+app.use(session({
+    name:SESS_ID,
+    resave:false,
+    saveUninitialized:false,
+    secret:SESS_SECRET,
+    cookie:{
+        maxAge:TWO_HOURS,
+        sameSite:true,
+        secure:IN_PROD
+    }
+}))
 require("./routes/chatRoutes")(app)
 
 io.sockets.on('connection',socket=>{
